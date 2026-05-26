@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>gallery — photos on your Solid pod</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#2a3140">
+</head><body>
+  <div class="topbar">
+    <span class="brand">gallery</span>
+    <span class="tagline">photos on your pod</span>
+    <a class="root" href="../../../" title="Go to your pod root">↑ root</a>
+  </div>
+
+  <div class="wrap"><div id="app"></div></div>
+
+  <div id="lightbox" class="lightbox" hidden></div>
+  <input id="filepick" type="file" accept="image/*" multiple hidden>
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="https://unpkg.com/xlogin"></script>
+  <script src="intents.js"></script>
+  <script src="app.js"></script>
+</body></html>

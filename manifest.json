@@ -1,0 +1,14 @@
+{
+  "name": "gallery",
+  "short_name": "gallery",
+  "description": "Photo albums on your Solid pod — schema:ImageGallery via TypeIndex, lightbox, upload, share via webacl.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#2a3140",
+  "theme_color": "#2a3140",
+  "handles": ["file"],
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
