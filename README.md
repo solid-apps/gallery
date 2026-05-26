@@ -45,9 +45,12 @@ webacl for permissions).
 
 - Sign-in is required to discover *your* albums (TypeIndex is read from your
   WebID). Public albums are world-readable by URL once shared.
-- Pods don't generate thumbnails, so the grid lazy-loads full images
-  (`loading="lazy"`). Fine for normal albums; very large ones will be heavier —
-  thumbnail-on-upload is a planned follow-up.
+- Photos shot in [`camera`](https://github.com/solid-apps/camera) come with a
+  `<stem>.thumb.jpg` thumbnail; gallery detects it from the album listing (no
+  extra requests) and uses it in the grid, falling back to the full image when
+  absent. Photos uploaded *into* gallery don't yet get thumbnails generated
+  (a planned follow-up) — they lazy-load the full image (`loading="lazy"`),
+  which is fine for normal albums and heavier for very large ones.
 - "Make existing album private" (physically relocating `/public/` → `/private/`)
   is a follow-up; today, create a private album, or lock any album's ACL via
   **webacl**.

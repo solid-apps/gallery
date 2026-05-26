@@ -26,6 +26,9 @@ const IMAGE_CLASSES = [
   'http://xmlns.com/foaf/0.1/Image'
 ]
 const IMG_RE = /\.(jpe?g|png|gif|webp|avif|bmp|svg|heic|heif)$/i
+// Shared thumbnail convention with camera: full <stem>.<ext> → <stem>.thumb.jpg
+const THUMB_RE = /\.thumb\.jpg$/i
+function thumbName(name) { return name.replace(/\.[^.]+$/, '') + '.thumb.jpg' }
 
 const state = {
   loading: false,
@@ -210,9 +213,17 @@ function albumLabel(url) {
 async function loadAlbumImages(album) {
   if (album.loaded) return
   const members = await listContainer(album.url).catch(() => [])
+  const base = album.url.replace(/\/?$/, '/')
+  // All resource basenames in the album — lets us pair a photo with its
+  // thumbnail from the listing we already have (no extra requests).
+  const names = new Set(members.filter(m => m.type === 'resource').map(m => decodeURIComponent(m.url.split('/').pop())))
   album.images = members
-    .filter(m => m.type === 'resource' && IMG_RE.test(m.url) && !/\/\.[^/]*$/.test(m.url))
-    .map(m => ({ url: m.url, name: decodeURIComponent(m.url.split('/').pop()) }))
+    .filter(m => m.type === 'resource' && IMG_RE.test(m.url) && !/\/\.[^/]*$/.test(m.url) && !THUMB_RE.test(m.url))
+    .map(m => {
+      const name = decodeURIComponent(m.url.split('/').pop())
+      const tn = thumbName(name)
+      return { url: m.url, name, thumb: names.has(tn) ? base + encodeURIComponent(tn) : null }
+    })
   album.loaded = true
 }
 
@@ -290,7 +301,7 @@ function albumView() {
   const imgs = (a.images || [])
   const grid = imgs.map((im, i) => `
     <button class="thumb" data-open="${i}">
-      <img loading="lazy" decoding="async" src="${esc(im.url)}" alt="${esc(im.name)}">
+      <img loading="lazy" decoding="async" src="${esc(im.thumb || im.url)}" onerror="this.onerror=null;this.src='${esc(im.url)}'" alt="${esc(im.name)}">
     </button>`).join('')
   return `
     <div class="bar">
@@ -376,7 +387,7 @@ function bind() {
   // album cover preview
   app.querySelectorAll('[data-cover]').forEach(async el => {
     const a = state.albums.find(x => x.url === el.dataset.cover)
-    if (a) { await loadAlbumImages(a); if (a.images && a.images[0]) el.innerHTML = `<img loading="lazy" src="${esc(a.images[0].url)}" alt="">` }
+    if (a) { await loadAlbumImages(a); const c = a.images && a.images[0]; if (c) el.innerHTML = `<img loading="lazy" src="${esc(c.thumb || c.url)}" onerror="this.onerror=null;this.src='${esc(c.url)}'" alt="">` }
   })
   const drop = $('#drop'); if (drop) wireDrop(drop)
   const si = $('#save-incoming'); if (si) si.onclick = saveIncoming
