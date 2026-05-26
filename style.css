@@ -4,6 +4,7 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0}
+[hidden]{display:none!important}   /* author display rules must not override the hidden attr (lightbox/inputs) */
 body{font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
 code{font:13px/1.4 ui-monospace,Menlo,monospace;background:#eef1f4;padding:1px 4px;border-radius:4px}
 
